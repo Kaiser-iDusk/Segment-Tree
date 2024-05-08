@@ -63,6 +63,16 @@ private:
             TREE[idx]->max = max(TREE[l_idx]->max, TREE[r_idx]->max);
         }
     }
+    int QUERY(int l, int r, int idx){
+        if(idx >= SIZE) return 0;
+        int start = TREE[idx]->l, end = TREE[idx]->r;
+        if(l>end || r<start) return INT_MIN;
+        if(l<=start && end<=r) return TREE[idx]->max;
+        // int mid = start + (end-start)/2;
+        int left = QUERY(l, r, 2*idx+1);
+        int right = QUERY(l, r, 2*idx+2);
+        return max(left, right);
+    }
 public:
     SegmentTree(int n){
         N = n;
@@ -85,6 +95,11 @@ public:
 
         UPDATE(0, i, val);
     }
+    int query(int l, int r){
+        if(l < 0 || r >= N) {cout << "Error: Array Index Out of Bounds.\n"; return -1;}
+        int ans = QUERY(l, r, 0);
+        return ans;
+    }
 };
 
 int main(){
@@ -93,7 +108,9 @@ int main(){
     TreeObj.buildTree(nums, 0, nums.size()-1);
     TreeObj.printTree();
     cout << "__________________UPDATE_________________\n";
-    TreeObj.update(4, 4);
+    TreeObj.update(4, 10);
     TreeObj.printTree();
+    cout << "__________________TEST__________________\n";
+    cout << "Range Query in range: (1, 5) = " << TreeObj.query(1, 5) << "\n";
     return 0;
 }
